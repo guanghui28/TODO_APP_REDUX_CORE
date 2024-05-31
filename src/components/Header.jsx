@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { saveNewTodo } from "../features/todos/todosSlice";
 
 const Header = () => {
 	const [text, setText] = useState("");
@@ -13,7 +14,7 @@ const Header = () => {
 		}
 
 		if (e.key === "Enter") {
-			dispatch({ type: "todos/todoAdded", payload: text });
+			dispatch(saveNewTodo(text));
 			setText("");
 		}
 	};

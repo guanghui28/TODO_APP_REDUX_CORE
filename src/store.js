@@ -1,10 +1,9 @@
 import { createStore, applyMiddleware } from "redux";
 import rootReducer from "./reducer";
 import { composeWithDevTools } from "@redux-devtools/extension";
-import { print1, print2, print3 } from "./exampleAddons/middleware";
+import { thunk } from "redux-thunk";
 
-const middlewareEnhancer = applyMiddleware(print1, print2, print3);
-const composedEnhancer = composeWithDevTools(middlewareEnhancer);
+const composedEnhancer = composeWithDevTools(applyMiddleware(thunk));
 
-const store = createStore(rootReducer, composedEnhancer);
+const store = createStore(rootReducer, undefined, composedEnhancer);
 export default store;
