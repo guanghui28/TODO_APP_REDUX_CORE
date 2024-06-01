@@ -5,7 +5,7 @@ export const StatusFilters = {
 };
 
 const initialState = {
-	status: "All",
+	status: "all",
 	colors: [],
 };
 
@@ -26,21 +26,23 @@ export default function filtersReducer(state = initialState, action) {
 			switch (changeType) {
 				case "added": {
 					if (colors.includes(color)) {
+						// This color already is set as a filter. Don't change the state.
 						return state;
 					}
 
 					return {
 						...state,
-						colors: colors.concat(color),
+						colors: state.colors.concat(color),
 					};
 				}
-				case "remove": {
+				case "removed": {
 					return {
 						...state,
-						colors: colors.filter((c) => c !== color),
+						colors: state.colors.filter(
+							(existingColor) => existingColor !== color
+						),
 					};
 				}
-
 				default:
 					return state;
 			}
@@ -50,3 +52,13 @@ export default function filtersReducer(state = initialState, action) {
 			return state;
 	}
 }
+
+export const statusFilterChanged = (status) => ({
+	type: "filters/statusFilterChanged",
+	payload: status,
+});
+
+export const colorFilterChanged = (color, changeType) => ({
+	type: "filters/colorFilterChanged",
+	payload: { color, changeType },
+});

@@ -582,6 +582,11 @@ ul.todo-list {
 	}
 }
 
+form.colorSelection {
+	display: grid;
+	grid-template-columns: 1fr;
+}
+
 form.colorSelection label {
 	margin: 0;
 }

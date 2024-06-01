@@ -1,9 +1,12 @@
 import { availableColors, capitalize } from "../filters/colors";
 import { MdDelete } from "react-icons/md";
 import { useSelector, useDispatch } from "react-redux";
-
-const selectTodoById = (state, todoId) =>
-	state.todos.find((todo) => todo.id === todoId);
+import {
+	selectTodoById,
+	todoColorSelected,
+	todoDeleted,
+	todoToggled,
+} from "./todosSlice";
 
 const TodoListItem = ({ id }) => {
 	const todo = useSelector((state) => selectTodoById(state, id));
@@ -11,19 +14,16 @@ const TodoListItem = ({ id }) => {
 	const dispatch = useDispatch();
 
 	const handleCompletedChanged = () => {
-		dispatch({ type: "todos/todoToggled", payload: id });
+		dispatch(todoToggled(id));
 	};
 
 	const handleColorChanged = (e) => {
-		dispatch({
-			type: "todos/colorSelected",
-			payload: { todoId: id, color: e.target.value },
-		});
+		dispatch(todoColorSelected(id, e.target.value));
 	};
 
 	const handleDelete = () => {
 		if (!confirm("Are you sure to delete this todo?")) return;
-		dispatch({ type: "todos/todoDeleted", payload: id });
+		dispatch(todoDeleted(id));
 	};
 
 	const colorOptions = availableColors.map((c) => (

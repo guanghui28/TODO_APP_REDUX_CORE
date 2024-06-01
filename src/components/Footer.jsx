@@ -1,7 +1,16 @@
 import { availableColors, capitalize } from "../features/filters/colors";
-import { StatusFilters } from "../features/filters/filtersSlice";
+import {
+	colorFilterChanged,
+	statusFilterChanged,
+	StatusFilters,
+} from "../features/filters/filtersSlice";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+import {
+	todosClearCompleted,
+	todosMarkAllCompleted,
+	todosRemaining,
+} from "../features/todos/todosSlice";
 
 const RemainingTodos = ({ count }) => {
 	const suffix = count === 1 ? "" : "s";
@@ -43,6 +52,7 @@ const ColorFilters = ({ value: colors, onChange }) => {
 		const handleChange = () => {
 			const changeType = checked ? "removed" : "added";
 			onChange(color, changeType);
+			console.log(checked);
 		};
 
 		return (
@@ -74,26 +84,15 @@ const ColorFilters = ({ value: colors, onChange }) => {
 
 const Footer = () => {
 	const { status, colors } = useSelector((state) => state.filters);
-	const todosRemaining = useSelector((state) => {
-		const unCompletedTodos = state.todos.filter((todo) => !todo.completed);
-		return unCompletedTodos.length;
-	});
+	const todosRemainingLength = useSelector(todosRemaining);
 
 	const dispatch = useDispatch();
 
 	const onColorChange = (color, changeType) =>
-		dispatch({
-			type: "filters/colorFilterChanged",
-			payload: { color, changeType },
-		});
-
-	const onStatusChange = (status) =>
-		dispatch({ type: "filters/statusFilterChanged", payload: status });
-
-	const handleMarkAllCompleted = () => dispatch({ type: "todos/allCompleted" });
-
-	const handleClearCompleted = () =>
-		dispatch({ type: "todos/completedCleared" });
+		dispatch(colorFilterChanged(color, changeType));
+	const onStatusChange = (status) => dispatch(statusFilterChanged(status));
+	const handleMarkAllCompleted = () => dispatch(todosMarkAllCompleted());
+	const handleClearCompleted = () => dispatch(todosClearCompleted());
 
 	return (
 		<footer className="footer">
@@ -107,7 +106,7 @@ const Footer = () => {
 				</button>
 			</div>
 
-			<RemainingTodos count={todosRemaining} />
+			<RemainingTodos count={todosRemainingLength} />
 			<StatusFilter value={status} onChange={onStatusChange} />
 			<ColorFilters value={colors} onChange={onColorChange} />
 		</footer>
