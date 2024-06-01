@@ -7,8 +7,8 @@ import {
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import {
-	todosClearCompleted,
-	todosMarkAllCompleted,
+	completedTodosCleared,
+	allTodosCompleted,
 	todosRemaining,
 } from "../features/todos/todosSlice";
 
@@ -91,8 +91,8 @@ const Footer = () => {
 	const onColorChange = (color, changeType) =>
 		dispatch(colorFilterChanged(color, changeType));
 	const onStatusChange = (status) => dispatch(statusFilterChanged(status));
-	const handleMarkAllCompleted = () => dispatch(todosMarkAllCompleted());
-	const handleClearCompleted = () => dispatch(todosClearCompleted());
+	const handleMarkAllCompleted = () => dispatch(allTodosCompleted());
+	const handleClearCompleted = () => dispatch(completedTodosCleared());
 
 	return (
 		<footer className="footer">

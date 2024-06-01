@@ -1,3 +1,5 @@
+import { createSlice } from "@reduxjs/toolkit";
+
 export const StatusFilters = {
 	All: "all",
 	Active: "active",
@@ -12,53 +14,45 @@ const initialState = {
 // {type: 'filters/statusFilterChanged', payload: filterValue}
 // {type: 'filters/colorFilterChanged', payload: {color, changeType}}
 
-export default function filtersReducer(state = initialState, action) {
-	switch (action.type) {
-		case "filters/statusFilterChanged":
-			return {
-				...state,
-				status: action.payload,
-			};
-		case "filters/colorFilterChanged": {
-			let { color, changeType } = action.payload;
-			const { colors } = state;
-
-			switch (changeType) {
-				case "added": {
-					if (colors.includes(color)) {
-						// This color already is set as a filter. Don't change the state.
-						return state;
+const filtersSlice = createSlice({
+	name: "filters",
+	initialState,
+	reducers: {
+		statusFilterChanged(state, action) {
+			state.status = action.payload;
+		},
+		colorFilterChanged: {
+			prepare(color, changeType) {
+				return {
+					payload: {
+						color,
+						changeType,
+					},
+				};
+			},
+			reducer(state, action) {
+				const { color, changeType } = action.payload;
+				const { colors } = state;
+				switch (changeType) {
+					case "added": {
+						if (!colors.includes(color)) {
+							colors.push(color);
+						}
+						break;
 					}
 
-					return {
-						...state,
-						colors: state.colors.concat(color),
-					};
+					case "removed": {
+						state.colors = colors.filter((c) => c !== color);
+						break;
+					}
+					default:
+						return;
 				}
-				case "removed": {
-					return {
-						...state,
-						colors: state.colors.filter(
-							(existingColor) => existingColor !== color
-						),
-					};
-				}
-				default:
-					return state;
-			}
-		}
-
-		default:
-			return state;
-	}
-}
-
-export const statusFilterChanged = (status) => ({
-	type: "filters/statusFilterChanged",
-	payload: status,
+			},
+		},
+	},
 });
 
-export const colorFilterChanged = (color, changeType) => ({
-	type: "filters/colorFilterChanged",
-	payload: { color, changeType },
-});
+export default filtersSlice.reducer;
+
+export const { statusFilterChanged, colorFilterChanged } = filtersSlice.actions;
